@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}{% endblock %}</title>
+    <style>
+        :root {
+            --background: #282A36;
+            --foreground: #F8F8F2;
+            --selection: #44475A;
+            --comment: #6272A4;
+            --red: #FF5555;
+            --orange: #FFB86C;
+            --yellow: #F1FA8C;
+            --green: #50FA7B;
+            --purple: #BD93F9;
+            --cyan: #8BE9FD;
+            --pink: #FF79C6;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: .5em;
+            color: var(--foreground);
+            background-color: var(--background);
+        }
+        a {
+            color: var(--cyan);
+            text-decoration: none;
+        }
+        table {
+            border-spacing: 0;
+        }
+        thead {
+            position: sticky;
+            top: 0;
+            background-color: var(--background);
+        }
+        tbody a {
+            color: unset;
+        }
+        tbody > tr:has(> :first-child > :checked) {
+            background-color: var(--selection);
+        }
+        td {
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            max-width: 18vw;
+            padding: .1em .4em;
+        }
+    </style>
+</head>
+<body>
+{% block content %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<table>
+    <thead>
+        <tr>
+            <th>Filename</th>
+            <th>Date</th>
+            <th>Size</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for file in files | sort(attribute="date") %}
+        <tr>
+            <td><a href="{{ file.name | basename }}">{{ file.name | basename }}</a></td>
+            <td>{{ file.date | strftime("%d.%m.%Y") }}</td>
+            <td>{{ file.size | filesizeformat }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

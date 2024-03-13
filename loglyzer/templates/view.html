@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block title %}{{ file.name | basename }} - {% for filter in filters | sort(attribute="key") %}{{ filter }}{% if not loop.last %} ∧ {% endif %}{% endfor %}{% endblock %}
+
+{% block content %}
+<p>{{ file.name | basename }} - {{ file.date | strftime("%d.%m.%Y") }} - {{ file.size | filesizeformat }}</p>
+<form>
+    <ul>
+        {% for filter in filters | sort(attribute="key") %}
+        {% for value in filter.values %}
+        <input type="hidden" name="{{ filter.key }}" value="{{ value }}">
+        {% endfor %}
+        <li>{{ filter }} <a href="?{{ query_wo(filter.key) }}">Entfernen</a></li>
+        {% endfor %}
+    </ul>
+    <table>
+        <thead>
+            <tr>
+                <th colspan="10">
+                    <input type="submit" value="Logeinträge exportieren" name="export">
+                    <input type="submit" value="An AbuseIPDB melden" name="report">
+                </th>
+            </tr>
+            <tr>
+                <th></th>
+                <th>IP</th>
+                <th>Date</th>
+                <th>Method</th>
+                <th>Path</th>
+                <th>Status</th>
+                <th>Size</th>
+                <th>Domain</th>
+                <th>Referer</th>
+                <th>User-Agent</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for log in logs %}
+            <tr>
+                <td><input type="checkbox" name="lineno" value="{{ log.lineno }}"></td>
+                <td><a href="?{{ request.query_params }}&ip={{ log.ip | urlencode }}">{{ log.ip }}</a> <a href="{{ request.url_for("_whois", filename=request.path_params["filename"], lineno=log.lineno) }}">WHOIS</a></td>
+                <td><a href="?{{ request.query_params }}&date={{ log.date | urlencode }}">{{ log.date | strftime("%d.%m.%Y %H:%M:%S") }}</a></td>
+                <td><a href="?{{ request.query_params }}&method={{ log.method | urlencode }}">{{ log.method }}</a></td>
+                <td><a href="?{{ request.query_params }}&path={{ log.path | urlencode }}">{{ log.path }}</a></td>
+                <td style="color: var(--{% if log.status >= 500 %}red{% elif log.status >= 400 %}orange{% elif log.status >= 300 %}cyan{% else %}green{% endif %})"><a href="?{{ request.query_params }}&status={{ log.status | urlencode }}">{{ log.status }}</a></td>
+                <td><a href="?{{ request.query_params }}&size={{ log.size | urlencode }}">{{ log.size | filesizeformat }}</a></td>
+                <td><a href="?{{ request.query_params }}&domain={{ log.domain | urlencode }}">{{ log.domain }}</a></td>
+                <td><a href="?{{ request.query_params }}&referer={{ log.referer | urlencode }}">{{ log.referer }}</a></td>
+                <td><a href="?{{ request.query_params }}&useragent={{ log.useragent | urlencode }}">{{ log.useragent }}</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</form>
+</div>
+<script>
+    function toggle(event, elem) {
+        if (event.target.tagName !== "TD") return;
+        elem.checked = !elem.checked;
+    }
+    [...document.getElementsByName("lineno")].forEach(elem => elem.parentElement.parentElement.addEventListener("click", event => toggle(event, elem)));
+</script>
+{% endblock %}

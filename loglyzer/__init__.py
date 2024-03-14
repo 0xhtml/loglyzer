@@ -38,7 +38,7 @@ async def _view(request: Request):
         return PlainTextResponse("\n".join(log.export() for log in logs))
 
     if "report" in request.query_params.keys():
-        return PlainTextResponse(abuseipdb.report(logs))
+        return PlainTextResponse(abuseipdb.report(list(logs)))
 
     return _templates.TemplateResponse(
         "view.html",

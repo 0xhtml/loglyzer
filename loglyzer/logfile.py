@@ -36,8 +36,6 @@ class Logfile(NamedTuple):
     @classmethod
     def parse(cls, filesystem: fsspec.AbstractFileSystem, filename: str) -> "Logfile":
         if not _FILENAME_REGEX.match(os.path.basename(filename)):
-            print(_FILENAME_REGEX)
-            print(os.path.basename(filename))
             raise InvalidLogfilenameError(f"{filename} is not a valid log filename")
 
         file = filesystem.info(filename)

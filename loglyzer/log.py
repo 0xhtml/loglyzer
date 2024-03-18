@@ -63,5 +63,5 @@ class Log(NamedTuple):
         return (
             f"{self.ip} - [{self.date.strftime('%d/%b/%Y:%H:%M:%S %z')}] "
             f"\"{self.method} {self.path} {self.http}\" {self.status} "
-            f"{self.size} {self.domain} \"{self.referer}\" \"{self.useragent}\""
+            f"{self.size} \"{self.referer}\" \"{self.useragent}\""
         )

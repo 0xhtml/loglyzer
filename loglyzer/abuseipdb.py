@@ -22,18 +22,19 @@ def report(logs: list[Log]) -> str:
     text = "\n".join(log.export() for log in logs)[:1024] + "\n"
     text = text[: text.rfind("\n")]
 
-    resp = httpx.post(
-        "https://api.abuseipdb.com/api/v2/report",
-        headers={
-            "Key": env.ABUSEIPDB_KEY,
-            "Accept": "application/json",
-        },
-        data={
-            "ip": logs[0].ip,
-            "categories": "21",
-            "comment": text,
-            "timestamp": _frmt_date(logs[0].date),
-        },
-    )
+    with httpx.Client(transport=httpx.HTTPTransport(retries=3)) as client:
+        resp = client.post(
+            "https://api.abuseipdb.com/api/v2/report",
+            headers={
+                "Key": env.ABUSEIPDB_KEY,
+                "Accept": "application/json",
+            },
+            data={
+                "ip": logs[0].ip,
+                "categories": "21",
+                "comment": text,
+                "timestamp": _frmt_date(logs[0].date),
+            },
+        )
 
     return resp.content

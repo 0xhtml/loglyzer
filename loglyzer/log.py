@@ -8,6 +8,11 @@ from . import env
 from .filters import Filter
 
 _LINE_REGEX = re.compile(env.LINE_REGEX)
+_DOMAIN_REGEX = re.compile(
+    r"(?:[a-z0-9]\.|[a-z0-9][a-z0-9\-]{0,61}[a-z0-9]\.)*"
+    + env.DOMAIN.replace(".", r"\."),
+    re.I,
+)
 
 
 class InvalidLogError(ValueError):
@@ -59,9 +64,12 @@ class Log(NamedTuple):
     def matches(self, filters: set[Filter]) -> bool:
         return all(_filter.matches(self) for _filter in filters)
 
-    def export(self) -> str:
+    def export(self, hide_domain: bool = True) -> str:
+        referer = (
+            _DOMAIN_REGEX.sub("[domain]", self.referer) if hide_domain else self.referer
+        )
         return (
             f"{self.ip} - [{self.date.strftime('%d/%b/%Y:%H:%M:%S %z')}] "
             f"\"{self.method} {self.path} {self.http}\" {self.status} "
-            f"{self.size} \"{self.referer}\" \"{self.useragent}\""
+            f"{self.size} \"{referer}\" \"{self.useragent}\""
         )

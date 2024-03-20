@@ -35,7 +35,7 @@ async def _view(request: Request):
     logs = logfile.get_logs(filters)
 
     if "export" in request.query_params.keys():
-        return PlainTextResponse("\n".join(log.export() for log in logs))
+        return PlainTextResponse("\n".join(log.export(False) for log in logs))
 
     if "report" in request.query_params.keys():
         return PlainTextResponse(abuseipdb.report(list(logs)))
